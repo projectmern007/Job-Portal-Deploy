@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.f315e685.css",
-    "main.js": "/static/js/main.f4ecdc0b.js",
+    "main.js": "/static/js/main.131a928f.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
     "static/media/GRA_Home-Header-Overlay.png": "/static/media/GRA_Home-Header-Overlay.f661b9fc1537a71ebca8.png",
     "static/media/ictak image.jpg": "/static/media/ictak image.ff1d99d196408ea5e3e0.jpg",
@@ -12,11 +12,11 @@
     "static/media/LOGO_ICTAK-ENG-ALT-White-Text.png": "/static/media/LOGO_ICTAK-ENG-ALT-White-Text.d289fd43a472752fc777.png",
     "index.html": "/index.html",
     "main.f315e685.css.map": "/static/css/main.f315e685.css.map",
-    "main.f4ecdc0b.js.map": "/static/js/main.f4ecdc0b.js.map",
+    "main.131a928f.js.map": "/static/js/main.131a928f.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f315e685.css",
-    "static/js/main.f4ecdc0b.js"
+    "static/js/main.131a928f.js"
   ]
 }
