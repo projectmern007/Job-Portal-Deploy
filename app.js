@@ -88,7 +88,7 @@ app.post("/api/upload/:token", upload.single("resume"), async (req, res) => {
                     }).exec();
                     res.status(200).json({ message: "File Uploaded" });
                 } else {
-                   await fs.unlink(`./uploads/${filename}`);
+                   
                     res.status(200).json({ message: `alredy applied` });
                 }
             } else {
