@@ -26,6 +26,9 @@ const jobs = require("./Routers/JobRoutes");
 const jobres = require("./Routers/ResponseRouter");
 const user = require("./Routers/UserRouter");
 const login = require("./Routers/LoginRouter");
+const { S3Uploadv2 } = require("./S3Service");
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3()
 app.use("/api", empapi);
 app.use("/api", jobs);
 app.use("/api", jobres);
@@ -39,22 +42,27 @@ const PORT = process.env.PORT;
 app.use(express.static(path.join(__dirname,'/build'))); 
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        return cb(null, "./uploads");
-    },
-    filename: function (req, file, cb) {
-        return cb(null, `${Date.now()}-${file.originalname}`);
-    },
-});
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         return cb(null, "./uploads");
+//     },
+//     filename: function (req, file, cb) {
+//         return cb(null, `${Date.now()}-${file.originalname}`);
+//     },
+// });
+
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 app.post("/api/upload/:token", upload.single("resume"), async (req, res) => {
     try {
-        console.log(req.file);
+         
+        const result = await S3Uploadv2(req.file)
+            console.log(result.uploadname)
+        // console.log(req.file);
         const filename = req.file.filename;
         const responderid = req.body.responderid;
-        const path = req.file.filename;
+        const path = result.uploadname;
         const username = req.body.username;
         const emailid = req.body.emailid;
         const posterid = req.body.posterid;
@@ -94,28 +102,44 @@ app.post("/api/upload/:token", upload.single("resume"), async (req, res) => {
 });
 
 //to download the file
+// app.get("/api/download/:path", async (req, res) => {
+//     const filename = req.params.path;
+
+//     try {
+//         res.download(`./uploads/${filename}`);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(404).json({ message: "error" });
+//     }
+// });
+
+//to download file
+
 app.get("/api/download/:path", async (req, res) => {
     const filename = req.params.path;
 
     try {
-        res.download(`./uploads/${filename}`);
+        let file = await s3.getObject({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: filename,
+          }).promise()
+          console.log(file)
+        res.send(file.Body);
     } catch (error) {
         console.log(error);
-        res.status(404).json({ message: "error" });
+        res.status(400).json({ message: "Server error" });
     }
 });
-
-
 
 
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname
     ,'/build/index.html')); });
 
-    
+
     (async () => {
         try {
-            await connecttoDB();
+            await connecttoDB(); //waits for db conn before starting sever, to minimize db connection bugs in cyclic
             app.listen(PORT, () => {
                 console.log(`Server is running at ${PORT}`);
             });
