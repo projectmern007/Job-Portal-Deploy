@@ -13,7 +13,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
-require("./dbconn/dbconn");
+const connecttoDB= require("./dbconn/dbconn");
 
 const JobModel = require("./Models/JoblistingModel");
 
@@ -31,6 +31,8 @@ app.use("/api", jobs);
 app.use("/api", jobres);
 app.use("/api", user);
 app.use("/api", login);
+
+const connstr = process.env.MONGO_DB
 
 const PORT = process.env.PORT;
 
@@ -104,10 +106,22 @@ app.get("/api/download/:path", async (req, res) => {
 });
 
 
+
+
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname
     ,'/build/index.html')); });
 
-app.listen(PORT, () => {
-    console.log(`Server is running at ${PORT}`);
-});
+    
+    (async () => {
+        try {
+            await connecttoDB();
+            app.listen(PORT, () => {
+                console.log(`Server is running at ${PORT}`);
+            });
+        } catch (error) {
+            console.log("Error starting server:", error);
+        }
+    })();
+    
+    
