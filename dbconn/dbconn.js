@@ -1,7 +1,8 @@
 const mongoose=require('mongoose');
+require("dotenv").config()
 
-
-mongoose.connect('mongodb+srv://Varsha:finalprova@cluster0.hjfajgo.mongodb.net/Jobportal')
+const connstr = process.env.MONGO_DB
+mongoose.connect(connstr)
 .then(()=>{
     console.log('Connected to MongoDb');
 })

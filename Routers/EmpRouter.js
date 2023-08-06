@@ -22,7 +22,7 @@ router.post("/empsignup",async(req,res)=>{
          if(!checkemp) 
          {
             newEmp= new EmpModel(emp);
-            const savedata=await newEmp.save();
+            const savedata= await newEmp.save();
             res.status(200).json({message:"Added Emp details Successfully"})
          }
            else{
@@ -33,7 +33,8 @@ router.post("/empsignup",async(req,res)=>{
             res.status(200).json({message:"Invalid! User not associated with ICTAK"})
         }
     }catch(error){
-        res.status(400).json("Cannot add")
+        console.log(error)
+        res.status(400).json("Server error")
     }
 })
 //...get../viewemp

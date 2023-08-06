@@ -21,6 +21,7 @@ router.post("/addjob", async (req, res) => {
         })
         
     } catch (err) {
+        console.log(err)
         res.status(404).json({ message: `Cannot add job ERR`, error:err  });
     }
 });
@@ -30,7 +31,8 @@ router.get("/viewjobs",async(req,res)=>{
         const data = await JobModel.find({}, {responses:0});
         res.json(data)
     } catch (error) {
-       res.status(404).json({Message:"error",error}) 
+        console.log(error)
+       res.status(404).json({Message:"error",err: error}) 
     }
 })
 
