@@ -15,9 +15,11 @@ router.post('/login',async(req,res)=>{
     let username=req.body.username;
     
     let user=await UserModel.findOne({username:username})
+   
     try {
         if (!user) {
             let emp= await EmpModel.findOne({username:username})
+           
             if (!emp) {
                  let admin=await AdminModel.findOne({username:username})
                 if (!admin) {
@@ -38,7 +40,7 @@ router.post('/login',async(req,res)=>{
 
                     else{
                         console.log("password");
-                        res.json({message:"Login Failed"})
+                        res.status(200).json({message:"Incorrect Password"}) 
                     }
                 }  
             } else {
@@ -55,7 +57,7 @@ router.post('/login',async(req,res)=>{
                 }
 
                 else{
-                    res.json({message:"Login Failed"}) 
+                    res.status(200).json({message:"Incorrect Password"}) 
                 } 
             }
             
@@ -74,7 +76,7 @@ router.post('/login',async(req,res)=>{
             }
             
             else{
-                res.json({message:"LoginFailed"}) 
+                res.status(200).json({message:"Incorrect Password"}) 
             } 
         }
     } catch (error) {

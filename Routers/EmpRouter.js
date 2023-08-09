@@ -4,13 +4,14 @@ router.use(express.json());
 router.use(express.urlencoded({extended:true}));
 const EmpModel=require('../Models/EmpModel');
 const EmpregModel = require('../Models/RegemployerModel')
-
+const UserModel = require('../Models/UserModel')
 
 
 //post....empSignup api
 router.post("/empsignup",async(req,res)=>{
   try{  
         const code = req.body.empregnum
+        const username= req.body.username
         const regemp = await EmpregModel.findOne({empregnum:code})
         console.log(regemp)
         const emp=req.body;
@@ -20,10 +21,18 @@ router.post("/empsignup",async(req,res)=>{
             const checkemp = await EmpModel.findOne({empregnum:code})
             
          if(!checkemp) 
-         {
+         {   
+            const checkusername= (await EmpModel.findOne({username:username})|| await UserModel.findOne({username:username}))
+             if(!checkusername)
+             {
             newEmp= new EmpModel(emp);
             const savedata= await newEmp.save();
             res.status(200).json({message:"Added Emp details Successfully"})
+             }
+            else{
+                  res.status(200).json({message:"Username already taken, choose another username"})
+                }
+          
          }
            else{
             res.status(200).json({message:"Employer Already registered!"})

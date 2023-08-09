@@ -8,22 +8,39 @@ router.use(express.json());
 const UserModel=require('../Models/UserModel');
 const StudProfModel=require('../Models/StudProfModel');
 const AlumniregModel=require('../Models/AlumniregModel');
+const EmpModel =require("../Models/EmpModel")
 // User Sign Up
 router.post('/userSignUp', async(req,res)=>{
     try {
         let user= req.body;
         let regnum=req.body.regnum;
+        let username= req.body.username;
         let alumni = await AlumniregModel.findOne({regnum:regnum});
         if (alumni) {
             let alrdyReg = await UserModel.findOne({regnum:regnum});
             if (alrdyReg) {
+
+            
                 console.log("you are alredy registerd")
                 res.json({message:"Already registered"});
             } else {
-                let newUser= await UserModel(user);
-                newUser.save();
-                res.json({message:"user saved successfully"});
-                console.log("saved");
+                const checkusername= (await EmpModel.findOne({username:username})|| await UserModel.findOne({username:username}))
+
+                if (!checkusername) {
+                    let newUser= await UserModel(user);
+                    newUser.save();
+                    res.json({message:"user saved successfully"});
+                    console.log("saved");
+
+
+                    
+                } else {
+
+                      res.status(200).json({message:"Username already taken, choose another username"});
+                }
+ 
+
+               
             }
       //THEN NOT AN ALUMNI  
         } else {
@@ -49,7 +66,7 @@ router.post("/studendProfile", async(req,res)=>{
             prof,  
         }
 
-        //  updation of profile
+       
         let alreadyProf= await StudProfModel.findOne({alumniId:alid});
         
         if (alreadyProf) {
@@ -70,7 +87,28 @@ router.post("/studendProfile", async(req,res)=>{
   
 })
 
+//api for checking if profile exists and viewing it
+router.post('/checkprofile/:id', async(req, res)=>{
 
+    try {
+        const alumid = req.params.id
+   
+        const data = await StudProfModel.findOne({alumniId:alumid})
+        if(data)
+        {
+           res.status(200).json({ data:data , message:'profile already created'})
+        }
+        else{
+            res.status(200).json({  message:'profile not created'})
+        }
+       
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({message:'error'})
+        
+    }
+
+})
 
 //api for finding one particular student    
 router.post('/findalumni/:id',async(req,res)=>{

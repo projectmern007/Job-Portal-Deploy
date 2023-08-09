@@ -101,17 +101,6 @@ app.post("/api/upload/:token", upload.single("resume"), async (req, res) => {
     }
 });
 
-//to download the file
-// app.get("/api/download/:path", async (req, res) => {
-//     const filename = req.params.path;
-
-//     try {
-//         res.download(`./uploads/${filename}`);
-//     } catch (error) {
-//         console.log(error);
-//         res.status(404).json({ message: "error" });
-//     }
-// });
 
 //to download file
 
