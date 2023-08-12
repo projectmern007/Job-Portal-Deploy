@@ -7,6 +7,7 @@ router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
 const JobModel = require("../Models/JoblistingModel");
+const AdminModel = require("../Models/Adminmodel")
 const { ObjectId } = require("bson");
 
 //api to add responses to joblistings
@@ -94,21 +95,31 @@ router.get("/viewresponses/:jobid/:token", async (req, res) => {
 
 
 //api for admin to verify the  responses
-router.put("/verifyres/:resid/:token", async (req,res)=>{
+router.put("/verifyres/:adminid/:resid/:token",  async (req,res)=>{
     try {
-        resid= req.params.resid;
-        jwt.verify(req.params.token,"ictjp",(error,decoded)=>{
-            if (decoded && decoded.email) {
-                JobModel.findOneAndUpdate(
-                    { "responses._id": resid },
-                    { $set: { "responses.$.Verified": true }},
-                    { new: true } // to return the updated document
-                  ).exec();
-            
-                 res.status(200).json({message:'Verified'}) 
-            }
-            else{res.status(200).json({message:'Unauthorised User'}) }
-        })
+       const  resid= req.params.resid;
+       const adminid= req.params.adminid;
+        const admin = await AdminModel.findOne({_id:adminid});
+        console.log( "hii", admin)
+        if(admin)
+        {
+            jwt.verify(req.params.token,"ictjp",(error,decoded)=>{
+                if (decoded && decoded.email) {
+                    JobModel.findOneAndUpdate(
+                        { "responses._id": resid },
+                        { $set: { "responses.$.Verified": true }},
+                        { new: true } // to return the updated document
+                      ).exec();
+                
+                     res.status(200).json({message:'Verified'}) 
+                }
+                else{res.status(200).json({message:'Unauthorised User'}) }
+            })
+        }
+        else{
+            res.status(200).json({message:'Unauthorised User'})
+        }
+        
          
     } catch (error) {
         console.log(error)
@@ -117,7 +128,7 @@ router.put("/verifyres/:resid/:token", async (req,res)=>{
 })
 
 //api for employers to fetch verified responses for the job,
-router.get("/verifiedres/:jobid/:token", async (req, res) => {
+router.get("/verifiedres/:jobid/:token",  async (req, res) => {
     try {
         console.log(req.params.jobid)
         const jobid = req.params.jobid;

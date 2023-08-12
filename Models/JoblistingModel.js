@@ -7,7 +7,7 @@ const JobSchema = new mongoose.Schema({
     jobdesc: String,
     jobrequirements: String,
     eligibility:String,
-    experience: Number,
+    experience: String,
     salary: String,
     location: String,
     responses: {
